@@ -45,6 +45,6 @@ void DataTransfer::processReq(JsonObject payload) {
 std::unique_ptr<JsonDoc> DataTransfer::createConf(){
     auto doc = makeJsonDoc(getMemoryTag(), JSON_OBJECT_SIZE(1));
     JsonObject payload = doc->to<JsonObject>();
-    payload["status"] = "Rejected";
+    payload["status"] = "Accepted";
     return doc;
 }
