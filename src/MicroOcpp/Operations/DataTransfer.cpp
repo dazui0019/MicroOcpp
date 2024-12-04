@@ -5,6 +5,15 @@
 #include <MicroOcpp/Operations/DataTransfer.h>
 #include <MicroOcpp/Debug.h>
 
+const char *TAG = "DataTransfer";
+#include "esp_log.h"
+
+#ifndef DATA_TRANSFER_RECEIVE_PAYLOAD_BUFSIZE
+#define DATA_TRANSFER_RECEIVE_PAYLOAD_BUFSIZE 512
+#endif
+
+char data_transfer_recv_payload_buff[DATA_TRANSFER_RECEIVE_PAYLOAD_BUFSIZE] = {'\0'};
+
 using MicroOcpp::Ocpp16::DataTransfer;
 using MicroOcpp::JsonDoc;
 
@@ -40,6 +49,11 @@ void DataTransfer::processConf(JsonObject payload){
 
 void DataTransfer::processReq(JsonObject payload) {
     // Do nothing - we're just required to reject these DataTransfer requests
+    auto len = serializeJson(payload, data_transfer_recv_payload_buff, DATA_TRANSFER_RECEIVE_PAYLOAD_BUFSIZE);
+    if (len <= 0) {
+        MO_DBG_WARN("Received payload buffer exceeded. Continue without payload");
+    }
+    ESP_LOGI(TAG, "Received payload: %s", data_transfer_recv_payload_buff);
 }
 
 std::unique_ptr<JsonDoc> DataTransfer::createConf(){
